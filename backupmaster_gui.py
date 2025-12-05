@@ -19,8 +19,9 @@ import io
 from PIL import Image, ImageDraw
 from backupmaster.core import BackupEngine
 from backupmaster.auth import LicenseManager
-from backupmaster.scheduler import BackupScheduler
-from backupmaster.schedule_dialog import ScheduleManagerDialog
+# TEMPORARIAMENTE DESABILITADO PARA DEBUG
+# from backupmaster.scheduler import BackupScheduler
+# from backupmaster.schedule_dialog import ScheduleManagerDialog
 
 
 class BackupThread(QThread):
@@ -188,10 +189,11 @@ class BackupMasterGUI(QMainWindow):
         self.backup_thread = None
         self.restore_thread = None
         self.license_manager = LicenseManager()
-        self.scheduler = BackupScheduler()
-        
-        # Define callback do scheduler
-        self.scheduler.set_callback(self.scheduled_backup_callback)
+        # TEMPORARIAMENTE DESABILITADO PARA DEBUG
+        # self.scheduler = BackupScheduler()
+        # 
+        # # Define callback do scheduler
+        # self.scheduler.set_callback(self.scheduled_backup_callback)
         
         # Verifica licença antes de inicializar UI
         if not self.check_license():
@@ -511,9 +513,10 @@ class BackupMasterGUI(QMainWindow):
         restore_btn.clicked.connect(self.restore_selected)
         action_layout.addWidget(restore_btn)
         
-        schedule_btn = QPushButton("📅 Gerenciar Agendamentos")
-        schedule_btn.clicked.connect(self.manage_schedules)
-        action_layout.addWidget(schedule_btn)
+        # TEMPORARIAMENTE DESABILITADO PARA DEBUG
+        # schedule_btn = QPushButton("📅 Gerenciar Agendamentos")
+        # schedule_btn.clicked.connect(self.manage_schedules)
+        # action_layout.addWidget(schedule_btn)
         
         history_layout.addLayout(action_layout)
         history_group.setLayout(history_layout)
@@ -529,8 +532,9 @@ class BackupMasterGUI(QMainWindow):
         # Define tooltip (nome que aparece ao passar o mouse)
         self.tray_icon.setToolTip("BackupMaster - Sistema de Backup")
         
-        # Inicia scheduler
-        self.scheduler.start()
+        # TEMPORARIAMENTE DESABILITADO PARA DEBUG
+        # # Inicia scheduler
+        # self.scheduler.start()
         
         # Menu do tray
         tray_menu = QMenu()
