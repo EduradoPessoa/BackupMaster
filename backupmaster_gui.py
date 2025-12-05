@@ -19,6 +19,8 @@ import io
 from PIL import Image, ImageDraw
 from backupmaster.core import BackupEngine
 from backupmaster.auth import LicenseManager
+from backupmaster.scheduler import BackupScheduler
+from backupmaster.schedule_dialog import ScheduleManagerDialog
 
 
 class BackupThread(QThread):
@@ -186,6 +188,10 @@ class BackupMasterGUI(QMainWindow):
         self.backup_thread = None
         self.restore_thread = None
         self.license_manager = LicenseManager()
+        self.scheduler = BackupScheduler()
+        
+        # Define callback do scheduler
+        self.scheduler.set_callback(self.scheduled_backup_callback)
         
         # Verifica licença antes de inicializar UI
         if not self.check_license():
@@ -505,6 +511,10 @@ class BackupMasterGUI(QMainWindow):
         restore_btn.clicked.connect(self.restore_selected)
         action_layout.addWidget(restore_btn)
         
+        schedule_btn = QPushButton("📅 Gerenciar Agendamentos")
+        schedule_btn.clicked.connect(self.manage_schedules)
+        action_layout.addWidget(schedule_btn)
+        
         history_layout.addLayout(action_layout)
         history_group.setLayout(history_layout)
         main_layout.addWidget(history_group)
@@ -518,6 +528,9 @@ class BackupMasterGUI(QMainWindow):
         
         # Define tooltip (nome que aparece ao passar o mouse)
         self.tray_icon.setToolTip("BackupMaster - Sistema de Backup")
+        
+        # Inicia scheduler
+        self.scheduler.start()
         
         # Menu do tray
         tray_menu = QMenu()
@@ -754,6 +767,38 @@ Economia de espaço: {result['compression_ratio']:.1f}%"""
         """Callback quando ocorre erro na restauração"""
         self.backup_btn.setEnabled(True)
         QMessageBox.critical(self, "Erro", f"Erro ao restaurar backup:\n{error_msg}")
+    
+    def manage_schedules(self):
+        """Abre diálogo de gerenciamento de agendamentos"""
+        dialog = ScheduleManagerDialog(self.scheduler, self)
+        dialog.exec()
+    
+    def scheduled_backup_callback(self, source, destination, format, incremental):
+        """Callback executado quando um backup agendado é disparado"""
+        try:
+            # Executa backup
+            result = self.engine.create_backup(
+                source_dir=source,
+                dest_dir=destination,
+                format=format,
+                incremental=incremental
+            )
+            
+            # Notifica no tray
+            self.tray_icon.showMessage(
+                "Backup Agendado Concluído",
+                f"Backup automático realizado com sucesso!\n{result['files_count']} arquivos",
+                QSystemTrayIcon.MessageIcon.Information,
+                5000
+            )
+        except Exception as e:
+            # Notifica erro
+            self.tray_icon.showMessage(
+                "Erro no Backup Agendado",
+                f"Falha ao executar backup automático: {str(e)}",
+                QSystemTrayIcon.MessageIcon.Critical,
+                5000
+            )
 
 
 def main():
