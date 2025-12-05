@@ -12,6 +12,7 @@ import py7zr
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Callable, Optional
+from backupmaster.telemetry import TelemetryManager
 
 
 class BackupEngine:
@@ -22,6 +23,7 @@ class BackupEngine:
     def __init__(self):
         self.metadata_file = ".backupmaster_metadata.json"
         self.progress_callback: Optional[Callable] = None
+        self.telemetry = TelemetryManager()
         
     def set_progress_callback(self, callback: Callable):
         """Define callback para atualização de progresso"""
@@ -228,6 +230,9 @@ class BackupEngine:
         self._save_metadata(dest_dir, metadata)
         
         self._update_progress(100, 100, "Backup concluído!")
+        
+        # Registra telemetria
+        self.telemetry.record_backup(backup_info)
         
         return {
             "status": "success",

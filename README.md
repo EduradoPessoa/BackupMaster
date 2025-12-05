@@ -100,6 +100,36 @@ python backupmaster_cli.py license
 
 Leia mais em: [LICENSE_SYSTEM.md](LICENSE_SYSTEM.md)
 
+## 📊 Telemetria e Estatísticas
+
+O BackupMaster rastreia estatísticas de uso para mostrar o impacto global:
+
+### Estatísticas Pessoais
+```bash
+# Ver suas estatísticas
+python backupmaster_cli.py stats
+```
+
+Mostra:
+- Terabytes backupeados
+- Número de backups
+- Espaço economizado
+- Formatos preferidos
+
+### Estatísticas Globais (Opcional)
+```bash
+# Contribuir para estatísticas globais
+python stats_collector.py global
+```
+
+Gera dashboard com:
+- Total de usuários
+- Usuários ativos (30 dias)
+- Terabytes totais backupeados
+- Total de backups realizados
+
+**Privacidade**: Dados completamente anonimizados. Leia mais em: [TELEMETRY.md](TELEMETRY.md)
+
 ## 📚 Documentação
 
 - [GETTING_STARTED.md](GETTING_STARTED.md) - Instalação e primeiros passos

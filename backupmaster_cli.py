@@ -289,6 +289,49 @@ def license():
     show_license_info()
 
 
+@cli.command()
+def stats():
+    """Mostra estatísticas de uso"""
+    from backupmaster.telemetry import TelemetryManager, format_bytes
+    
+    telemetry = TelemetryManager()
+    stats = telemetry.get_formatted_stats()
+    
+    if stats["total_backups"] == 0:
+        console.print("\n[yellow]ℹ️  Nenhum backup realizado ainda.[/yellow]\n")
+        return
+    
+    console.print(Panel.fit(
+        f"[cyan]Estatísticas de Uso[/cyan]\n\n"
+        f"[white]Total de Backups:[/white] {stats['total_backups']}\n"
+        f"[white]Total de Arquivos:[/white] {stats['total_files']:,}\n"
+        f"[white]Dados Originais:[/white] {stats['total_gb_original']:.2f} GB ({stats['total_tb_original']:.3f} TB)\n"
+        f"[white]Dados Comprimidos:[/white] {stats['total_gb_compressed']:.2f} GB ({stats['total_tb_compressed']:.3f} TB)\n"
+        f"[white]Espaço Economizado:[/white] {stats['total_gb_saved']:.2f} GB ({stats['compression_ratio']:.1f}%)\n"
+        f"[white]Dias de Uso:[/white] {stats['days_active']} dias",
+        title="📊 BackupMaster - Estatísticas",
+        border_style="cyan"
+    ))
+    
+    # Tabela de formatos
+    table = Table(show_header=True, header_style="bold cyan", box=box.ROUNDED)
+    table.add_column("Formato", style="magenta")
+    table.add_column("Backups", justify="right", style="green")
+    
+    for format_name, count in stats["backups_by_format"].items():
+        table.add_row(format_name.upper(), str(count))
+    
+    console.print("\n[cyan]📦 Backups por Formato:[/cyan]")
+    console.print(table)
+    
+    # Informações adicionais
+    console.print(f"\n[cyan]📈 Detalhes:[/cyan]")
+    console.print(f"  • Backups Completos: {stats['full_backups']}")
+    console.print(f"  • Backups Incrementais: {stats['incremental_backups']}")
+    console.print(f"  • Primeiro Backup: {stats.get('first_backup', 'N/A')}")
+    console.print(f"  • Último Backup: {stats.get('last_backup', 'N/A')}\n")
+
+
 if __name__ == '__main__':
     cli()
 
