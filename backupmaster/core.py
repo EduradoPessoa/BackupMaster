@@ -8,7 +8,12 @@ import json
 import shutil
 import zipfile
 import tarfile
-import py7zr
+try:
+    import py7zr
+    HAS_7Z = True
+except ImportError:
+    HAS_7Z = False
+    print("⚠️  py7zr não instalado. Formato 7z não disponível.")
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Callable, Optional
@@ -18,7 +23,10 @@ from backupmaster.telemetry import TelemetryManager
 class BackupEngine:
     """Motor principal de backup com suporte a múltiplos formatos"""
     
-    SUPPORTED_FORMATS = ['zip', '7z', 'tar.gz', 'tar.bz2']
+    # Formatos suportados dependem das bibliotecas instaladas
+    SUPPORTED_FORMATS = ['zip', 'tar.gz', 'tar.bz2']
+    if HAS_7Z:
+        SUPPORTED_FORMATS.insert(1, '7z')
     
     def __init__(self):
         self.metadata_file = ".backupmaster_metadata.json"
@@ -202,6 +210,8 @@ class BackupEngine:
         if format == 'zip':
             self._compress_zip(files_to_backup, source_dir, output_file)
         elif format == '7z':
+            if not HAS_7Z:
+                raise ValueError("Formato 7z não disponível. Instale py7zr: pip install py7zr")
             self._compress_7z(files_to_backup, source_dir, output_file)
         elif format == 'tar.gz':
             self._compress_tar(files_to_backup, source_dir, output_file, 'w:gz')

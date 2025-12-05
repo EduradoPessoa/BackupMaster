@@ -433,7 +433,18 @@ class BackupMasterGUI(QMainWindow):
         options_layout = QHBoxLayout()
         options_layout.addWidget(QLabel("🗜️ Formato:"))
         self.format_combo = QComboBox()
-        self.format_combo.addItems(['ZIP', '7z', 'TAR.GZ', 'TAR.BZ2'])
+        
+        # Adiciona apenas formatos disponíveis
+        available_formats = []
+        from backupmaster.core import HAS_7Z
+        
+        available_formats.append('ZIP')
+        if HAS_7Z:
+            available_formats.append('7z')
+        available_formats.append('TAR.GZ')
+        available_formats.append('TAR.BZ2')
+        
+        self.format_combo.addItems(available_formats)
         options_layout.addWidget(self.format_combo)
         
         self.incremental_check = QCheckBox("📊 Backup Incremental")
@@ -466,7 +477,7 @@ class BackupMasterGUI(QMainWindow):
         progress_group.setLayout(progress_layout)
         main_layout.addWidget(progress_group)
         
-        # Tabela de backups
+        # Tabela de backups - AUMENTADA
         history_group = QGroupBox("📋 Histórico de Backups")
         history_layout = QVBoxLayout()
         
@@ -478,6 +489,10 @@ class BackupMasterGUI(QMainWindow):
         self.backup_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.backup_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.backup_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        
+        # Define altura mínima maior para a tabela
+        self.backup_table.setMinimumHeight(250)  # Aumentado de ~150 para 250
+        
         history_layout.addWidget(self.backup_table)
         
         # Botões de ação
@@ -500,6 +515,9 @@ class BackupMasterGUI(QMainWindow):
         icon = self.create_tray_icon()
         
         self.tray_icon = QSystemTrayIcon(icon, self)
+        
+        # Define tooltip (nome que aparece ao passar o mouse)
+        self.tray_icon.setToolTip("BackupMaster - Sistema de Backup")
         
         # Menu do tray
         tray_menu = QMenu()
@@ -608,11 +626,14 @@ class BackupMasterGUI(QMainWindow):
             'TAR.BZ2': 'tar.bz2'
         }
         
+        selected_format = self.format_combo.currentText()
+        backup_format = format_map.get(selected_format, 'zip')
+        
         self.backup_thread = BackupThread(
             self.engine,
             source,
             dest,
-            format_map[self.format_combo.currentText()],
+            backup_format,
             self.incremental_check.isChecked()
         )
         
