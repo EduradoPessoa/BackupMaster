@@ -46,3 +46,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# PyInstaller
+build/
+dist/
+*.spec.bak
+__pycache__/
+*.pyc
