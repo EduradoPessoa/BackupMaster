@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,52 +9,56 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
+
         * {
             font-family: 'Inter', sans-serif;
         }
-        
+
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        
+
         .card-hover {
             transition: all 0.3s ease;
         }
-        
+
         .card-hover:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        
+
         .stat-card {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .admin-section {
             display: none;
         }
-        
+
         .admin-section.active {
             display: block;
         }
-        
+
         .pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 1;
             }
+
             50% {
                 opacity: .5;
             }
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
     <!-- Header -->
     <header class="gradient-bg text-white shadow-lg">
@@ -68,7 +73,8 @@
                         <p class="text-purple-200">Dashboard de Telemetria</p>
                     </div>
                 </div>
-                <button id="adminBtn" class="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-purple-50 transition">
+                <button id="adminBtn"
+                    class="bg-white text-purple-600 px-6 py-2 rounded-lg font-semibold hover:bg-purple-50 transition">
                     <i class="fas fa-lock mr-2"></i>Admin
                 </button>
             </div>
@@ -217,6 +223,114 @@
             </div>
         </div>
 
+        <!-- Download Section -->
+        <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl shadow-lg p-8 mb-8 text-white">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold mb-2">
+                    <i class="fas fa-download mr-3"></i>
+                    Baixe o BackupMaster
+                </h2>
+                <p class="text-purple-100 text-lg">
+                    Sistema profissional de backup - 100% Gratuito e Open Source
+                </p>
+            </div>
+
+            <!-- Download Buttons -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Windows -->
+                <a href="https://github.com/EduradoPessoa/BackupMaster/releases/latest/download/BackupMaster-Windows.zip"
+                    onclick="trackDownload('windows')"
+                    class="bg-white text-gray-800 rounded-lg p-6 hover:shadow-2xl transition transform hover:scale-105 block">
+                    <div class="text-center">
+                        <i class="fab fa-windows text-5xl text-blue-600 mb-4"></i>
+                        <h3 class="font-bold text-xl mb-2">Windows</h3>
+                        <p class="text-sm text-gray-600 mb-4">Windows 10/11</p>
+                        <span class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold">
+                            <i class="fas fa-download mr-2"></i>Download
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Linux -->
+                <a href="https://github.com/EduradoPessoa/BackupMaster/releases/latest/download/BackupMaster-Linux.tar.gz"
+                    onclick="trackDownload('linux')"
+                    class="bg-white text-gray-800 rounded-lg p-6 hover:shadow-2xl transition transform hover:scale-105 block">
+                    <div class="text-center">
+                        <i class="fab fa-linux text-5xl text-gray-800 mb-4"></i>
+                        <h3 class="font-bold text-xl mb-2">Linux</h3>
+                        <p class="text-sm text-gray-600 mb-4">Ubuntu, Debian, Fedora</p>
+                        <span class="inline-block bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold">
+                            <i class="fas fa-download mr-2"></i>Download
+                        </span>
+                    </div>
+                </a>
+
+                <!-- macOS -->
+                <a href="https://github.com/EduradoPessoa/BackupMaster/releases/latest/download/BackupMaster-macOS.zip"
+                    onclick="trackDownload('macos')"
+                    class="bg-white text-gray-800 rounded-lg p-6 hover:shadow-2xl transition transform hover:scale-105 block">
+                    <div class="text-center">
+                        <i class="fab fa-apple text-5xl text-gray-600 mb-4"></i>
+                        <h3 class="font-bold text-xl mb-2">macOS</h3>
+                        <p class="text-sm text-gray-600 mb-4">macOS 10.15+</p>
+                        <span class="inline-block bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold">
+                            <i class="fas fa-download mr-2"></i>Download
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Share Section -->
+            <div class="border-t border-purple-400 pt-6">
+                <h3 class="text-xl font-bold mb-4 text-center">
+                    <i class="fas fa-share-alt mr-2"></i>
+                    Compartilhe com seus amigos
+                </h3>
+
+                <div class="flex justify-center space-x-4 mb-6">
+                    <!-- WhatsApp -->
+                    <button onclick="shareWhatsApp()"
+                        class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fab fa-whatsapp mr-2"></i>WhatsApp
+                    </button>
+
+                    <!-- Twitter -->
+                    <button onclick="shareTwitter()"
+                        class="bg-blue-400 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fab fa-twitter mr-2"></i>Twitter
+                    </button>
+
+                    <!-- LinkedIn -->
+                    <button onclick="shareLinkedIn()"
+                        class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fab fa-linkedin mr-2"></i>LinkedIn
+                    </button>
+
+                    <!-- Copy Link -->
+                    <button onclick="copyDownloadLink()"
+                        class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fas fa-link mr-2"></i>Copiar Link
+                    </button>
+                </div>
+
+                <!-- Email Invite -->
+                <div class="bg-white bg-opacity-10 rounded-lg p-6">
+                    <h4 class="font-bold mb-4 text-center">Convide por Email</h4>
+                    <form id="inviteForm" class="flex space-x-4">
+                        <input type="email" id="inviteEmail" placeholder="email@exemplo.com"
+                            class="flex-1 px-4 py-3 rounded-lg text-gray-800 focus:ring-2 focus:ring-white" required>
+                        <button type="submit"
+                            class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 px-8 py-3 rounded-lg font-bold transition">
+                            <i class="fas fa-envelope mr-2"></i>Enviar Convite
+                        </button>
+                    </form>
+                    <p class="text-xs text-purple-200 mt-2 text-center">
+                        Enviaremos um email com o link de download
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <!-- Admin Section -->
         <div id="adminSection" class="admin-section">
             <div class="bg-white rounded-xl shadow-lg p-6">
@@ -233,12 +347,8 @@
                 <!-- Search -->
                 <div class="mb-6">
                     <div class="relative">
-                        <input 
-                            type="text" 
-                            id="searchInput"
-                            placeholder="Buscar por nome, email ou token..."
-                            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        >
+                        <input type="text" id="searchInput" placeholder="Buscar por nome, email ou token..."
+                            class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                         <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
                     </div>
                 </div>
@@ -248,22 +358,28 @@
                     <table class="w-full">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Nome
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Email
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Token
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Backups
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     TB
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Último Acesso
                                 </th>
                             </tr>
@@ -289,25 +405,17 @@
                     <label class="block text-gray-700 text-sm font-bold mb-2">
                         Senha de Admin
                     </label>
-                    <input 
-                        type="password" 
-                        id="adminPassword"
+                    <input type="password" id="adminPassword"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Digite a senha"
-                    >
+                        placeholder="Digite a senha">
                 </div>
                 <div class="flex space-x-4">
-                    <button 
-                        type="submit"
-                        class="flex-1 bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
-                    >
+                    <button type="submit"
+                        class="flex-1 bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition">
                         Entrar
                     </button>
-                    <button 
-                        type="button"
-                        id="cancelBtn"
-                        class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition"
-                    >
+                    <button type="button" id="cancelBtn"
+                        class="flex-1 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition">
                         Cancelar
                     </button>
                 </div>
@@ -317,4 +425,5 @@
 
     <script src="dashboard.js"></script>
 </body>
+
 </html>

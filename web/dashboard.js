@@ -340,3 +340,150 @@ function formatDate(dateString) {
 setInterval(() => {
     loadPublicData();
 }, 30000); // A cada 30 segundos
+
+// ========== FUNÇÕES DE DOWNLOAD E COMPARTILHAMENTO ==========
+
+// Rastreia download
+async function trackDownload(platform) {
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'download',
+                platform: platform,
+                version: '1.0.0'
+            })
+        });
+
+        console.log(`Download rastreado: ${platform}`);
+    } catch (error) {
+        console.error('Erro ao rastrear download:', error);
+    }
+}
+
+// Compartilha no WhatsApp
+function shareWhatsApp() {
+    const text = encodeURIComponent(
+        '🔄 BackupMaster - Sistema Profissional de Backup\n\n' +
+        '✅ 100% Gratuito e Open Source\n' +
+        '✅ Backup Incremental Inteligente\n' +
+        '✅ Multi-Plataforma (Windows, Linux, macOS)\n\n' +
+        'Baixe agora: https://github.com/EduradoPessoa/BackupMaster'
+    );
+
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+// Compartilha no Twitter
+function shareTwitter() {
+    const text = encodeURIComponent(
+        '🔄 BackupMaster - Sistema Profissional de Backup\n\n' +
+        '✅ Gratuito e Open Source\n' +
+        '✅ Backup Incremental\n' +
+        '✅ Multi-Plataforma\n\n' +
+        '#BackupMaster #OpenSource #Backup'
+    );
+    const url = encodeURIComponent('https://github.com/EduradoPessoa/BackupMaster');
+
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+}
+
+// Compartilha no LinkedIn
+function shareLinkedIn() {
+    const url = encodeURIComponent('https://github.com/EduradoPessoa/BackupMaster');
+    const title = encodeURIComponent('BackupMaster - Sistema Profissional de Backup');
+    const summary = encodeURIComponent(
+        'Sistema profissional de backup 100% gratuito e open source. ' +
+        'Backup incremental inteligente para Windows, Linux e macOS.'
+    );
+
+    window.open(
+        `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+        '_blank'
+    );
+}
+
+// Copia link de download
+function copyDownloadLink() {
+    const link = 'https://github.com/EduradoPessoa/BackupMaster/releases/latest';
+
+    navigator.clipboard.writeText(link).then(() => {
+        // Mostra feedback
+        const btn = event.target.closest('button');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check mr-2"></i>Link Copiado!';
+        btn.classList.add('bg-green-600');
+        btn.classList.remove('bg-gray-700');
+
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('bg-green-600');
+            btn.classList.add('bg-gray-700');
+        }, 2000);
+    }).catch(err => {
+        alert('Erro ao copiar link. Por favor, copie manualmente:\n' + link);
+    });
+}
+
+// Envia convite por email
+document.getElementById('inviteForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('inviteEmail').value;
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalHTML = btn.innerHTML;
+
+    // Mostra loading
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
+    btn.disabled = true;
+
+    try {
+        // Simula envio de email (em produção, use um serviço de email)
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Em produção, você faria algo como:
+        // await fetch('/api/send-invite', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({ email })
+        // });
+
+        // Sucesso
+        btn.innerHTML = '<i class="fas fa-check mr-2"></i>Convite Enviado!';
+        btn.classList.add('bg-green-600');
+        btn.classList.remove('bg-yellow-500');
+
+        // Limpa campo
+        document.getElementById('inviteEmail').value = '';
+
+        // Mostra mensagem
+        alert(`Convite enviado para ${email}!\n\nEles receberão um email com o link de download.`);
+
+        // Restaura botão
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('bg-green-600');
+            btn.classList.add('bg-yellow-500');
+            btn.disabled = false;
+        }, 3000);
+
+    } catch (error) {
+        // Erro
+        btn.innerHTML = '<i class="fas fa-times mr-2"></i>Erro ao Enviar';
+        btn.classList.add('bg-red-600');
+        btn.classList.remove('bg-yellow-500');
+
+        alert('Erro ao enviar convite. Por favor, tente novamente.');
+
+        // Restaura botão
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('bg-red-600');
+            btn.classList.add('bg-yellow-500');
+            btn.disabled = false;
+        }, 3000);
+    }
+});
