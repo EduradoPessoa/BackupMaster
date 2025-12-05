@@ -1,67 +1,31 @@
 // Dashboard de Telemetria - BackupMaster
-// Dados simulados (em produção, viriam de uma API)
+// Conectado ao MySQL via API PHP
 
 const ADMIN_PASSWORD = 'backupmaster2025'; // Altere para uma senha segura
 
-// Dados de exemplo
+// URL da API (altere para seu domínio da Hostinger)
+const API_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:8000/api/telemetry.php'
+    : 'https://seu-dominio.com/api/telemetry.php';
+
+// Dados carregados da API
 let telemetryData = {
-    totalUsers: 1250,
-    activeUsers: 890,
-    totalBackups: 187500,
-    totalTB: 6250.50,
+    totalUsers: 0,
+    activeUsers: 0,
+    totalBackups: 0,
+    totalTB: 0,
     downloads: {
-        windows: 750,
-        linux: 320,
-        macos: 180
+        windows: 0,
+        linux: 0,
+        macos: 0
     },
     formats: {
-        zip: 45000,
-        '7z': 98000,
-        targz: 32500,
-        tarbz2: 12000
+        zip: 0,
+        '7z': 0,
+        targz: 0,
+        tarbz2: 0
     },
-    users: [
-        {
-            name: 'João Silva',
-            email: 'joao@email.com',
-            token: 'a1b2c3d4e5f6g7h8',
-            backups: 150,
-            tb: 5.2,
-            lastAccess: '2025-12-05'
-        },
-        {
-            name: 'Maria Santos',
-            email: 'maria@empresa.com',
-            token: 'x9y8z7w6v5u4t3s2',
-            backups: 89,
-            tb: 3.8,
-            lastAccess: '2025-12-04'
-        },
-        {
-            name: 'Pedro Costa',
-            email: 'pedro@tech.com',
-            token: 'p1q2r3s4t5u6v7w8',
-            backups: 234,
-            tb: 12.5,
-            lastAccess: '2025-12-05'
-        },
-        {
-            name: 'Ana Oliveira',
-            email: 'ana@startup.io',
-            token: 'm9n8o7p6q5r4s3t2',
-            backups: 67,
-            tb: 2.1,
-            lastAccess: '2025-12-03'
-        },
-        {
-            name: 'Carlos Mendes',
-            email: 'carlos@dev.com',
-            token: 'c1d2e3f4g5h6i7j8',
-            backups: 412,
-            tb: 18.9,
-            lastAccess: '2025-12-05'
-        }
-    ]
+    users: []
 };
 
 // Estado da aplicação
@@ -69,9 +33,73 @@ let isAdminLoggedIn = false;
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-    loadDashboardData();
+    loadPublicData();
     setupEventListeners();
 });
+
+// Carrega dados públicos da API
+async function loadPublicData() {
+    try {
+        const response = await fetch(`${API_URL}?type=public`);
+        const result = await response.json();
+
+        if (result.success) {
+            const data = result.data;
+
+            // Atualiza telemetryData
+            telemetryData.totalUsers = parseInt(data.total_users) || 0;
+            telemetryData.activeUsers = parseInt(data.active_users_30d) || 0;
+            telemetryData.totalBackups = parseInt(data.total_backups) || 0;
+            telemetryData.totalTB = parseFloat(data.total_tb) || 0;
+
+            telemetryData.downloads = {
+                windows: parseInt(data.downloads_windows) || 0,
+                linux: parseInt(data.downloads_linux) || 0,
+                macos: parseInt(data.downloads_macos) || 0
+            };
+
+            telemetryData.formats = {
+                zip: parseInt(data.format_zip) || 0,
+                '7z': parseInt(data.format_7z) || 0,
+                targz: parseInt(data.format_targz) || 0,
+                tarbz2: parseInt(data.format_tarbz2) || 0
+            };
+
+            loadDashboardData();
+        }
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        // Usa dados de fallback
+        loadDashboardData();
+    }
+}
+
+// Carrega dados de admin da API
+async function loadAdminData(password) {
+    try {
+        const response = await fetch(`${API_URL}?type=admin&password=${encodeURIComponent(password)}`);
+        const result = await response.json();
+
+        if (result.success) {
+            telemetryData.users = result.data.map(user => ({
+                name: user.name,
+                email: user.email,
+                token: user.token,
+                backups: parseInt(user.total_backups) || 0,
+                tb: parseFloat(user.tb) || 0,
+                lastAccess: user.last_validation || user.last_backup
+            }));
+
+            loadUsersTable();
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar dados admin:', error);
+        return false;
+    }
+}
 
 // Carrega dados do dashboard
 function loadDashboardData() {
@@ -102,7 +130,7 @@ function animateNumber(elementId, targetValue, isDecimal = false) {
             current = targetValue;
             clearInterval(timer);
         }
-        
+
         if (isDecimal) {
             element.textContent = current.toFixed(2) + ' TB';
         } else {
@@ -113,39 +141,39 @@ function animateNumber(elementId, targetValue, isDecimal = false) {
 
 // Atualiza gráfico de downloads
 function updateDownloadsChart() {
-    const total = telemetryData.downloads.windows + 
-                  telemetryData.downloads.linux + 
-                  telemetryData.downloads.macos;
+    const total = telemetryData.downloads.windows +
+        telemetryData.downloads.linux +
+        telemetryData.downloads.macos;
 
-    updateBar('downloadsWindows', 'downloadsWindowsBar', 
-              telemetryData.downloads.windows, total);
-    updateBar('downloadsLinux', 'downloadsLinuxBar', 
-              telemetryData.downloads.linux, total);
-    updateBar('downloadsMacOS', 'downloadsMacOSBar', 
-              telemetryData.downloads.macos, total);
+    updateBar('downloadsWindows', 'downloadsWindowsBar',
+        telemetryData.downloads.windows, total);
+    updateBar('downloadsLinux', 'downloadsLinuxBar',
+        telemetryData.downloads.linux, total);
+    updateBar('downloadsMacOS', 'downloadsMacOSBar',
+        telemetryData.downloads.macos, total);
 }
 
 // Atualiza gráfico de formatos
 function updateFormatsChart() {
-    const total = telemetryData.formats.zip + 
-                  telemetryData.formats['7z'] + 
-                  telemetryData.formats.targz + 
-                  telemetryData.formats.tarbz2;
+    const total = telemetryData.formats.zip +
+        telemetryData.formats['7z'] +
+        telemetryData.formats.targz +
+        telemetryData.formats.tarbz2;
 
-    updateBar('formatZip', 'formatZipBar', 
-              telemetryData.formats.zip, total);
-    updateBar('format7z', 'format7zBar', 
-              telemetryData.formats['7z'], total);
-    updateBar('formatTarGz', 'formatTarGzBar', 
-              telemetryData.formats.targz, total);
+    updateBar('formatZip', 'formatZipBar',
+        telemetryData.formats.zip, total);
+    updateBar('format7z', 'format7zBar',
+        telemetryData.formats['7z'], total);
+    updateBar('formatTarGz', 'formatTarGzBar',
+        telemetryData.formats.targz, total);
 }
 
 // Atualiza barra de progresso
 function updateBar(textId, barId, value, total) {
     const percentage = (value / total) * 100;
-    
+
     document.getElementById(textId).textContent = value.toLocaleString('pt-BR');
-    
+
     setTimeout(() => {
         document.getElementById(barId).style.width = percentage + '%';
     }, 100);
@@ -184,16 +212,18 @@ function hideLoginModal() {
 }
 
 // Handle login
-function handleLogin(e) {
+async function handleLogin(e) {
     e.preventDefault();
-    
+
     const password = document.getElementById('adminPassword').value;
-    
-    if (password === ADMIN_PASSWORD) {
+
+    // Tenta carregar dados admin
+    const success = await loadAdminData(password);
+
+    if (success) {
         isAdminLoggedIn = true;
         hideLoginModal();
         showAdminSection();
-        loadUsersTable();
     } else {
         alert('Senha incorreta!');
         document.getElementById('adminPassword').value = '';
@@ -268,13 +298,13 @@ function loadUsersTable(users = telemetryData.users) {
 // Filtra usuários
 function filterUsers(e) {
     const searchTerm = e.target.value.toLowerCase();
-    
-    const filtered = telemetryData.users.filter(user => 
+
+    const filtered = telemetryData.users.filter(user =>
         user.name.toLowerCase().includes(searchTerm) ||
         user.email.toLowerCase().includes(searchTerm) ||
         user.token.toLowerCase().includes(searchTerm)
     );
-    
+
     loadUsersTable(filtered);
 }
 
@@ -285,7 +315,7 @@ function copyToken(token) {
         const btn = event.target.closest('button');
         const originalHTML = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-check text-green-600"></i>';
-        
+
         setTimeout(() => {
             btn.innerHTML = originalHTML;
         }, 2000);
@@ -298,24 +328,15 @@ function formatDate(dateString) {
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return 'Hoje';
     if (diffDays === 1) return 'Ontem';
     if (diffDays < 7) return `${diffDays} dias atrás`;
-    
+
     return date.toLocaleDateString('pt-BR');
 }
 
-// Simula atualização em tempo real
+// Atualiza dados periodicamente
 setInterval(() => {
-    // Incrementa valores aleatoriamente
-    if (Math.random() > 0.7) {
-        telemetryData.totalBackups += Math.floor(Math.random() * 10);
-        telemetryData.totalTB += Math.random() * 0.5;
-        
-        document.getElementById('totalBackups').textContent = 
-            telemetryData.totalBackups.toLocaleString('pt-BR');
-        document.getElementById('totalTB').textContent = 
-            telemetryData.totalTB.toFixed(2) + ' TB';
-    }
-}, 5000);
+    loadPublicData();
+}, 30000); // A cada 30 segundos
