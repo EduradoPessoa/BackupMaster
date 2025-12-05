@@ -1,0 +1,285 @@
+BackupMaster - Estrutura do Projeto
+=====================================
+
+wsp2/
+│
+├── 📦 backupmaster/                    # Pacote principal
+│   ├── __init__.py                    # Inicialização (153 bytes)
+│   └── core.py                        # Motor de backup (12.2 KB)
+│
+├── 🖥️ backupmaster_gui.py             # Interface Gráfica (21.4 KB)
+├── 💻 backupmaster_cli.py             # Interface CLI (8.8 KB)
+├── 🧪 test_backupmaster.py            # Suite de testes (7.9 KB)
+│
+├── 📋 Documentação
+│   ├── README.md                      # Visão geral (2.0 KB)
+│   ├── GETTING_STARTED.md             # Instalação e primeiros passos (8.0 KB)
+│   ├── QUICK_START.md                 # Guia rápido (8.0 KB)
+│   ├── USAGE.md                       # Guia completo de uso (7.5 KB)
+│   ├── EXAMPLES.md                    # Exemplos práticos (5.7 KB)
+│   └── PROJECT_SUMMARY.md             # Resumo do projeto (7.7 KB)
+│
+├── ⚙️ Configuração
+│   ├── requirements.txt               # Dependências Python (235 bytes)
+│   ├── .gitignore                     # Git ignore (441 bytes)
+│   └── LICENSE                        # Licença MIT (1.1 KB)
+│
+└── 🚀 Instalação
+    ├── install.bat                    # Instalador Windows (1.6 KB)
+    └── install.sh                     # Instalador Linux/Mac (1.5 KB)
+
+
+ESTATÍSTICAS DO PROJETO
+========================
+
+📊 Arquivos por Tipo:
+- Python (.py):        4 arquivos
+- Documentação (.md):  6 arquivos
+- Configuração:        3 arquivos
+- Scripts:             2 arquivos
+- Total:              15 arquivos
+
+📏 Linhas de Código:
+- backupmaster/core.py:      ~380 linhas
+- backupmaster_gui.py:       ~520 linhas
+- backupmaster_cli.py:       ~250 linhas
+- test_backupmaster.py:      ~220 linhas
+- Total:                    ~1370 linhas
+
+💾 Tamanho Total:
+- Código Python:             ~50 KB
+- Documentação:              ~39 KB
+- Configuração:              ~3 KB
+- Total:                     ~92 KB
+
+
+COMPONENTES PRINCIPAIS
+======================
+
+1. MOTOR DE BACKUP (core.py)
+   ├── BackupEngine
+   │   ├── create_backup()           # Cria backup completo ou incremental
+   │   ├── list_backups()            # Lista backups disponíveis
+   │   ├── restore_backup()          # Restaura backup
+   │   ├── _calculate_file_hash()    # Calcula hash MD5
+   │   ├── _get_files_to_backup()    # Identifica arquivos modificados
+   │   ├── _compress_zip()           # Compressão ZIP
+   │   ├── _compress_7z()            # Compressão 7z
+   │   ├── _compress_tar()           # Compressão TAR.GZ/BZ2
+   │   ├── _restore_zip()            # Restauração ZIP
+   │   ├── _restore_7z()             # Restauração 7z
+   │   └── _restore_tar()            # Restauração TAR
+   │
+   └── Recursos:
+       ✅ Backup incremental com hash MD5
+       ✅ 4 formatos de compressão
+       ✅ Metadados em JSON
+       ✅ Callbacks de progresso
+       ✅ Tratamento de erros
+
+2. INTERFACE GRÁFICA (backupmaster_gui.py)
+   ├── BackupMasterGUI
+   │   ├── init_ui()                 # Inicializa interface
+   │   ├── setup_tray()              # Configura system tray
+   │   ├── start_backup()            # Inicia backup
+   │   ├── refresh_backup_list()     # Atualiza lista
+   │   ├── restore_selected()        # Restaura backup
+   │   └── closeEvent()              # Minimiza para tray
+   │
+   ├── BackupThread                  # Thread de backup
+   └── RestoreThread                 # Thread de restauração
+   │
+   └── Recursos:
+       ✅ Design moderno (tema escuro)
+       ✅ System tray no Windows
+       ✅ Notificações do sistema
+       ✅ Barra de progresso
+       ✅ Tabela de histórico
+       ✅ Multi-threading
+
+3. INTERFACE CLI (backupmaster_cli.py)
+   ├── Comandos:
+   │   ├── backup                    # Criar backup
+   │   ├── list                      # Listar backups
+   │   ├── restore                   # Restaurar backup
+   │   └── info                      # Informações
+   │
+   └── Recursos:
+       ✅ Interface colorida (Rich)
+       ✅ Barra de progresso
+       ✅ Tabelas formatadas
+       ✅ Validações
+       ✅ Mensagens claras
+
+4. TESTES (test_backupmaster.py)
+   ├── test_backup_creation()        # Testa criação
+   ├── test_incremental_backup()     # Testa incremental
+   ├── test_multiple_formats()       # Testa formatos
+   ├── test_restore()                # Testa restauração
+   └── test_list_backups()           # Testa listagem
+
+
+DEPENDÊNCIAS
+============
+
+Core:
+- pystray==0.19.5              # System tray
+- Pillow==10.1.0               # Imagens
+- PyQt6==6.6.1                 # Interface gráfica
+- watchdog==3.0.0              # Monitor de arquivos
+
+Compressão:
+- py7zr==0.20.8                # Formato 7z
+
+CLI:
+- click==8.1.7                 # Framework CLI
+- colorama==0.4.6              # Cores no terminal
+- rich==13.7.0                 # Interface rica
+
+Utilitários:
+- python-dateutil==2.8.2       # Datas
+- psutil==5.9.6                # Informações do sistema
+
+
+FORMATOS SUPORTADOS
+===================
+
+ZIP
+├── Compressão: Média (20-30%)
+├── Velocidade: Rápida
+├── Compatibilidade: Universal
+└── Uso: Backups frequentes, acesso rápido
+
+7z
+├── Compressão: Excelente (40-50%)
+├── Velocidade: Média
+├── Compatibilidade: Boa
+└── Uso: Backups de longo prazo, máxima economia
+
+TAR.GZ
+├── Compressão: Boa (30-40%)
+├── Velocidade: Boa
+├── Compatibilidade: Linux/Unix
+└── Uso: Servidores, ambientes Unix
+
+TAR.BZ2
+├── Compressão: Muito Boa (35-45%)
+├── Velocidade: Lenta
+├── Compatibilidade: Linux/Unix
+└── Uso: Backups de longo prazo em Linux
+
+
+FUNCIONALIDADES
+===============
+
+Backup:
+✅ Backup completo
+✅ Backup incremental (apenas arquivos modificados)
+✅ 4 formatos de compressão
+✅ Progresso em tempo real
+✅ Cálculo de economia de espaço
+✅ Metadados persistentes
+✅ Validação de integridade
+
+Interface:
+✅ GUI moderna e intuitiva
+✅ CLI completa e colorida
+✅ System tray no Windows
+✅ Notificações do sistema
+✅ Tabela de histórico
+✅ Restauração fácil
+✅ Multi-threading
+
+Automação:
+✅ Scripts de instalação
+✅ Atalhos de execução
+✅ Suporte a agendamento
+✅ Callbacks de progresso
+✅ Modo não-interativo
+
+Qualidade:
+✅ Código documentado
+✅ Suite de testes
+✅ Tratamento de erros
+✅ Validações
+✅ Logs e status
+
+
+COMO USAR
+=========
+
+1. INSTALAÇÃO:
+   Windows:  install.bat
+   Linux:    ./install.sh
+
+2. INTERFACE GRÁFICA:
+   Windows:  run_gui.bat
+   Linux:    ./run_gui.sh
+
+3. LINHA DE COMANDO:
+   Backup:   python backupmaster_cli.py backup -s "origem" -d "destino" -f 7z -i
+   Listar:   python backupmaster_cli.py list -d "destino"
+   Restaurar: python backupmaster_cli.py restore -b "arquivo.7z" -d "destino"
+
+4. TESTES:
+   python test_backupmaster.py
+
+
+DOCUMENTAÇÃO
+============
+
+README.md              - Visão geral do projeto
+GETTING_STARTED.md     - Instalação e primeiros passos
+QUICK_START.md         - Guia rápido de referência
+USAGE.md               - Guia completo de uso
+EXAMPLES.md            - Exemplos práticos detalhados
+PROJECT_SUMMARY.md     - Resumo técnico completo
+LICENSE                - Licença MIT
+
+
+CARACTERÍSTICAS TÉCNICAS
+=========================
+
+Linguagem:        Python 3.8+
+Interface GUI:    PyQt6
+Interface CLI:    Click + Rich
+Compressão:       zipfile, py7zr, tarfile
+Hash:             MD5 (hashlib)
+Metadados:        JSON
+Threading:        QThread (PyQt6)
+System Tray:      pystray, QSystemTrayIcon
+Plataformas:      Windows, Linux, macOS
+
+
+DESIGN
+======
+
+Cores:
+- Background:     #1a1a2e → #16213e (gradiente)
+- Accent:         #ff6b35 → #f7931e (laranja)
+- Secondary:      #0f3460 (azul escuro)
+- Text:           #ffffff (branco)
+
+Tipografia:
+- Família:        Segoe UI, Arial
+- Tamanhos:       10pt (normal), 11pt (botões), 28pt (header)
+
+Componentes:
+- Bordas arredondadas (6-10px)
+- Gradientes suaves
+- Efeitos de hover
+- Sombras sutis
+
+
+LICENÇA
+=======
+
+MIT License - Software livre e open source
+Use sem limitações em empresas e projetos pessoais
+
+
+VERSÃO
+======
+
+BackupMaster v1.0.0
+Desenvolvido com ❤️ em Python
